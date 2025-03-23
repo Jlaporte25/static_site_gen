@@ -1,5 +1,4 @@
 import unittest
-import htmlnode
 from textnode import TextNode, TextType
 from htmlnode import LeafNode
 

@@ -1,14 +1,19 @@
-from htmlnode import HTMLNode, LeafNode
+from htmlnode import HTMLNode, LeafNode, ParentNode
 from textnode import TextNode, TextType
 
 
 def main():
-    html_node = LeafNode(
-        "a",
-        "Click Me",
-        {"href": "https://www.google.com", "target": "_blank"},
+    node = ParentNode(
+        "p",
+        [
+            LeafNode("b", "Bold text"),
+            LeafNode(None, "Normal text"),
+            LeafNode("i", "italic text"),
+            LeafNode(None, "Normal text"),
+        ],
     )
-    print(html_node.to_html())
+
+    print(node.to_html())
 
 
 if __name__ == "__main__":

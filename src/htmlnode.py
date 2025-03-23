@@ -1,6 +1,3 @@
-from typing import Required
-
-
 class HTMLNode:
     def __init__(self, tag=None, value=None, children=None, props=None):
         self.tag = tag
@@ -22,13 +19,15 @@ class HTMLNode:
 
 
 class LeafNode(HTMLNode):
-    def __init__(self, tag=None, value=Required, props=None):
-        super().__init__(tag, value, props)
+    def __init__(self, tag, value, props=None):
+        super().__init__(tag, value, None, props)
 
     def to_html(self):
-        if self.value == None:
+        if self.value is None:
             raise ValueError
-        elif self.tag == None:
+        elif self.tag is None:
             return f"{self.value}"
+        elif self.props != None:
+            return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
         else:
             return f"<{self.tag}>{self.value}</{self.tag}>"

@@ -1,20 +1,14 @@
-from htmlnode import HTMLNode
+from htmlnode import HTMLNode, LeafNode
 from textnode import TextNode, TextType
 
 
 def main():
-    test_node = TextNode(
-        "This is some anchor text", TextType.LINK, "https://www.boot.dev"
-    )
-    print(test_node)
-
-    html_node = HTMLNode(
-        "p",
-        "this is the text inside the tag",
-        None,
+    html_node = LeafNode(
+        "a",
+        "Click Me",
         {"href": "https://www.google.com", "target": "_blank"},
     )
-    print(html_node.props_to_html())
+    print(html_node.to_html())
 
 
 if __name__ == "__main__":

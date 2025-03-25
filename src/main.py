@@ -1,6 +1,6 @@
-from typing import Text
 from htmlnode import HTMLNode, LeafNode, ParentNode
 from textnode import TextNode, TextType
+from split_node import split_nodes_delimiter
 
 
 def main():
@@ -20,17 +20,9 @@ def main():
         else:
             raise Exception
 
-    node = ParentNode(
-        "p",
-        [
-            LeafNode("b", "Bold text"),
-            LeafNode(None, "Normal text"),
-            LeafNode("i", "italic text"),
-            LeafNode(None, "Normal text"),
-        ],
-    )
-
-    print(node.to_html())
+    node = TextNode("This is text with a `bold` word", TextType.TEXT)
+    new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
+    print(new_nodes)
 
 
 if __name__ == "__main__":

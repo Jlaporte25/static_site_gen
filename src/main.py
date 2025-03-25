@@ -6,8 +6,8 @@ from text_to_html import text_node_to_html_node
 
 def main():
 
-    node = TextNode("This is text with a `bold` word", TextType.TEXT)
-    new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
+    node = TextNode("This is **text** with a **bold** word", TextType.TEXT)
+    new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
     print(new_nodes)
 
 

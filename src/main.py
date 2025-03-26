@@ -15,29 +15,6 @@ def main():
         split_final = split_nodes_link(split_images)
         return split_final
 
-    def markdown_to_blocks(markdown):
-        split_mark = markdown.split("\n\n")
-        new_list = []
-        for mark in split_mark:
-            if len(mark) > 0:
-                stripped = mark.strip()
-                final = stripped.strip(" ")
-                new_list.append(final)
-
-        return new_list
-
-    md = """
-    This is **bolded** paragraph
-
-    This is another paragraph with _italic_ text and `code` here
-    This is the same paragraph on a new line
-
-    - This is a list
-    - with items
-    """
-
-    print(markdown_to_blocks(md))
-
 
 if __name__ == "__main__":
     main()

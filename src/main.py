@@ -1,4 +1,6 @@
+from block_type import block_to_block_type
 from htmlnode import HTMLNode, LeafNode, ParentNode
+from markdown_to_blocks import markdown_to_blocks
 from textnode import TextNode, TextType
 from split_node import split_nodes_delimiter, split_nodes_link, split_nodes_image
 from text_to_html import text_node_to_html_node
@@ -14,6 +16,14 @@ def main():
         split_images = split_nodes_image(split_code)
         split_final = split_nodes_link(split_images)
         return split_final
+
+    def markdown_to_html_node(markdown):
+        blocks = markdown_to_blocks(markdown)
+        for block in blocks:
+            bl_type = block_to_block_type(block)
+
+    def text_to_children(text):
+        pass
 
 
 if __name__ == "__main__":

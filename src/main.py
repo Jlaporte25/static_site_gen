@@ -1,5 +1,6 @@
-from block_type import block_to_block_type
+from block_type import BlockType, block_to_block_type
 from htmlnode import HTMLNode, LeafNode, ParentNode
+import htmlnode
 from markdown_to_blocks import markdown_to_blocks
 from textnode import TextNode, TextType
 from split_node import split_nodes_delimiter, split_nodes_link, split_nodes_image
@@ -24,6 +25,16 @@ def main():
 
     def text_to_children(text):
         pass
+
+    md = """
+    This is **bolded** paragraph
+    text in a p
+    tag here
+
+    This is another paragraph with _italic_ text and `code` here
+
+    """
+    print(markdown_to_html_node(md))
 
 
 if __name__ == "__main__":

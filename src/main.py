@@ -25,13 +25,19 @@ def main():
                 continue
 
             bl_type = block_to_block_type(block)
-            tnodes = text_to_textnodes(block)
-            htmln = [text_node_to_html_node(node) for node in tnodes]
+            if bl_type == BlockType.CODE:
+                htmln = [
+                    TextNode(block.strip(), TextType.CODE)
+                ]  # No inline parsing for CODE blocks
+            else:
+                tnodes = text_to_textnodes(block)
+                htmln = [text_node_to_html_node(node) for node in tnodes]
+
             if bl_type == BlockType.PARAGRAPH:
                 children.append(HTMLNode("p", htmln, None))
             elif bl_type == BlockType.HEADING:
+                heading_level = block.count("#", 0, block.find(" "))
                 stripped_block = block.lstrip("#").strip()
-                heading_level = stripped_block.count("#", 0, block.find(" "))
                 tag = f"h{heading_level}"
                 children.append(HTMLNode(tag, htmln, None))
             elif bl_type == BlockType.UNORDERED_LIST:
@@ -39,7 +45,7 @@ def main():
                     HTMLNode(
                         "li", [text_node_to_html_node(item.lstrip("-").strip())], None
                     )
-                    for item in block.split("\n")
+                    for item in block.split_nodes_delimiter("-")
                     if item.strip()
                 ]
                 children.append(HTMLNode("ul", list_items, None))
@@ -57,11 +63,13 @@ def main():
             elif bl_type == BlockType.QUOTE:
                 children.append(HTMLNode("blockquote", htmln, None))
             elif bl_type == BlockType.CODE:
-                code_inner = HTMLNode("code", [TextNode(block.strip())], None)
+                code_inner = HTMLNode(
+                    "code", [TextNode(block.strip(), TextType.CODE)], None
+                )
                 children.append(HTMLNode("pre", [code_inner], None))
             else:
                 raise ValueError(f"Unhandled block type: {bl_type}")
-        parent_node = HTMLNode("div", children, None)
+        parent_node = ParentNode("div", children, None)
         return parent_node
 
     md = """
@@ -72,7 +80,9 @@ def main():
         This is another paragraph with _italic_ text and `code` here
 
         """
-    print(markdown_to_html_node(md))
+    node = markdown_to_html_node(md)
+    html = node.to_html()
+    print(html)
 
 
 if __name__ == "__main__":

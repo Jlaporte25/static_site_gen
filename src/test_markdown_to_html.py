@@ -1,5 +1,4 @@
 import unittest
-from htmlnode import HTMLNode
 from markdown_to_html_node import markdown_to_html_node
 
 

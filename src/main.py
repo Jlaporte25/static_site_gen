@@ -1,14 +1,14 @@
+import htmlnode
 from block_type import BlockType, block_to_block_type
 from htmlnode import HTMLNode, LeafNode, ParentNode
-import htmlnode
 from markdown_to_blocks import markdown_to_blocks
-from textnode import TextNode, TextType
-from split_node import split_nodes_delimiter, split_nodes_link, split_nodes_image
+from split_node import (split_nodes_delimiter, split_nodes_image,
+                        split_nodes_link)
 from text_to_html import text_node_to_html_node
+from textnode import TextNode, TextType
 
 
 def main():
-
     def text_to_textnodes(text):
         node = TextNode(text, TextType.TEXT)
         split_bold = split_nodes_delimiter([node], "**", TextType.BOLD)
@@ -22,9 +22,11 @@ def main():
         blocks = markdown_to_blocks(markdown)
         for block in blocks:
             bl_type = block_to_block_type(block)
+            children = text_to_children(block)
 
     def text_to_children(text):
-        pass
+        text_nodes = text_to_textnodes(text)
+        return text_nodes
 
     md = """
     This is **bolded** paragraph

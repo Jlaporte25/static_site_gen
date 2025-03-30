@@ -1,4 +1,3 @@
-import htmlnode
 from block_type import BlockType, block_to_block_type
 from htmlnode import HTMLNode, LeafNode, ParentNode
 from markdown_to_blocks import markdown_to_blocks
@@ -8,6 +7,24 @@ from textnode import TextNode, TextType
 
 
 def main():
+    def text_node_to_html_node(text_node):
+        if text_node.text_type == TextType.TEXT:
+            return LeafNode(None, text_node.text, None)
+        elif text_node.text_type == TextType.BOLD:
+            return LeafNode("b", text_node.text, None)
+        elif text_node.text_type == TextType.ITALIC:
+            return LeafNode("i", text_node.text, None)
+        elif text_node.text_type == TextType.CODE:
+            return LeafNode("code", text_node.text, None)
+        elif text_node.text_type == TextType.LINK:
+            return LeafNode("a", text_node.text, {"href": f"{text_node.url}"})
+        elif text_node.text_type == TextType.IMAGE:
+            return LeafNode(
+                "img", "", {"src": f"{text_node.url}", "alt": f"{text_node.text}"}
+            )
+        else:
+            raise Exception
+
     def text_to_textnodes(text):
         node = TextNode(text, TextType.TEXT)
         split_bold = split_nodes_delimiter([node], "**", TextType.BOLD)
@@ -34,24 +51,23 @@ def main():
                 htmln = [text_node_to_html_node(node) for node in tnodes]
 
             if bl_type == BlockType.PARAGRAPH:
-                children.append(HTMLNode("p", htmln, None))
+                children.append(ParentNode("p", htmln, None))
             elif bl_type == BlockType.HEADING:
                 heading_level = block.count("#", 0, block.find(" "))
-                stripped_block = block.lstrip("#").strip()
                 tag = f"h{heading_level}"
-                children.append(HTMLNode(tag, htmln, None))
+                children.append(LeafNode(tag, htmln, None))
             elif bl_type == BlockType.UNORDERED_LIST:
                 list_items = [
-                    HTMLNode(
+                    LeafNode(
                         "li", [text_node_to_html_node(item.lstrip("-").strip())], None
                     )
                     for item in block.split_nodes_delimiter("-")
                     if item.strip()
                 ]
-                children.append(HTMLNode("ul", list_items, None))
+                children.append(ParentNode("ul", list_items, None))
             elif bl_type == BlockType.ORDERED_LIST:
                 list_items = [
-                    HTMLNode(
+                    LeafNode(
                         "li",
                         [text_node_to_html_node(item.split(maxsplit=1)[-1].strip())],
                         None,
@@ -59,27 +75,27 @@ def main():
                     for item in block.split("\n")
                     if item.strip()
                 ]
-                children.append(HTMLNode("ol", list_items, None))
+                children.append(ParentNode("ol", list_items, None))
             elif bl_type == BlockType.QUOTE:
-                children.append(HTMLNode("blockquote", htmln, None))
+                children.append(ParentNode("blockquote", htmln, None))
             elif bl_type == BlockType.CODE:
-                code_inner = HTMLNode(
-                    "code", [TextNode(block.strip(), TextType.CODE)], None
+                code_inner = ParentNode(
+                    "code", [TextNode(block.strip(), TextType.TEXT)], None
                 )
-                children.append(HTMLNode("pre", [code_inner], None))
+                children.append(ParentNode("pre", [code_inner], None))
             else:
                 raise ValueError(f"Unhandled block type: {bl_type}")
         parent_node = ParentNode("div", children, None)
         return parent_node
 
     md = """
-        This is **bolded** paragraph
-        text in a p
-        tag here
+    This is **bolded** paragraph
+    text in a p
+    tag here
 
-        This is another paragraph with _italic_ text and `code` here
+    This is another paragraph with _italic_ text and `code` here
 
-        """
+    """
     node = markdown_to_html_node(md)
     html = node.to_html()
     print(html)

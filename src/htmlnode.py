@@ -1,3 +1,6 @@
+from textnode import TextNode
+
+
 class HTMLNode:
     def __init__(self, tag=None, value=None, children=None, props=None):
         self.tag = tag
@@ -45,6 +48,8 @@ class ParentNode(HTMLNode):
         else:
             children = ""
             for child in self.children:
-                children += child.to_html()
-            result = f"<{self.tag}>{children}</{self.tag}>"
-            return result
+                if isinstance(child, TextNode):
+                    children += child.text
+                else:
+                    children += child.to_html()
+            return f"<{self.tag}>{children}</{self.tag}>"

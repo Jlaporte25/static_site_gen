@@ -3,6 +3,7 @@ from htmlnode import LeafNode, ParentNode
 from markdown_to_blocks import markdown_to_blocks
 from split_node import split_nodes_delimiter, split_nodes_image, split_nodes_link
 from textnode import TextNode, TextType
+from extract_title import extract_title
 import os
 import shutil
 
@@ -27,6 +28,8 @@ def main():
                 copy_static_to_public(source_item, dest_item)
 
     copy_static_to_public("static", "public")
+
+    print(extract_title("# Hello"))
 
 
 if __name__ == "__main__":

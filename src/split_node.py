@@ -13,28 +13,50 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
         remaining_text = node.text
         while delimiter in remaining_text:
             index_first = remaining_text.find(delimiter)
+            # If no more delimiters after this one, treat rest as plain text
             index_second = remaining_text.find(delimiter, index_first + len(delimiter))
 
+            # If no closing delimiter found, check if there's a colon
             if index_second == -1:
-                raise Exception("invalid markdown syntax")
-
-            text_before = remaining_text[:index_first]
-            text_inside = remaining_text[index_first + len(delimiter) : index_second]
-            remaining_text = remaining_text[index_second + len(delimiter) :]
-
-            new_list.extend(
-                [
-                    TextNode(text_before, TextType.TEXT),
-                    TextNode(text_inside, text_type),
+                # Look for a colon after the opening delimiter
+                colon_index = remaining_text.find(":", index_first + len(delimiter))
+                if colon_index != -1:
+                    # Use colon as boundary if no closing delimiter
+                    text_before = remaining_text[:index_first]
+                    text_inside = remaining_text[
+                        index_first + len(delimiter) : colon_index
+                    ]
+                    remaining_text = remaining_text[colon_index:]
+                else:
+                    # If no colon either, treat remainder as text
+                    if index_first > 0:
+                        new_list.append(
+                            TextNode(remaining_text[:index_first], TextType.TEXT)
+                        )
+                    new_list.append(
+                        TextNode(remaining_text[index_first:], TextType.TEXT)
+                    )
+                    remaining_text = ""
+                    break
+            else:
+                text_before = remaining_text[:index_first]
+                text_inside = remaining_text[
+                    index_first + len(delimiter) : index_second
                 ]
-            )
+                remaining_text = remaining_text[index_second + len(delimiter) :]
 
-        if len(remaining_text) > 0:
+            if text_before:
+                new_list.append(TextNode(text_before, TextType.TEXT))
+            if text_inside:
+                new_list.append(TextNode(text_inside, text_type))
+
+        if remaining_text:
             new_list.append(TextNode(remaining_text, TextType.TEXT))
 
-    return new_list
+    return [node for node in new_list if node.text]  # Filter out empty nodes
 
 
+# The other functions remain unchanged
 def split_nodes_image(old_nodes):
     result = []
 

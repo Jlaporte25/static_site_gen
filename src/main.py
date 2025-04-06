@@ -1,9 +1,4 @@
-from block_type import BlockType, block_to_block_type
-from htmlnode import LeafNode, ParentNode
-from markdown_to_blocks import markdown_to_blocks
-from split_node import split_nodes_delimiter, split_nodes_image, split_nodes_link
-from textnode import TextNode, TextType
-from extract_title import extract_title
+from generate_page import generate_page
 import os
 import shutil
 
@@ -29,7 +24,18 @@ def main():
 
     copy_static_to_public("static", "public")
 
-    print(extract_title("# Hello"))
+    content_dir = "content"
+    public_dir = "public"
+
+    for root, dirs, files in os.walk(content_dir):
+        for file in files:
+            if file.endswith(".md"):
+                file_path = os.path.join(root, file)
+                output_path = file_path.replace(content_dir, public_dir).replace(
+                    ".md", ".html"
+                )
+                os.makedirs(os.path.dirname(output_path), exist_ok=True)
+                generate_page(file_path, "template.html", output_path)
 
 
 if __name__ == "__main__":

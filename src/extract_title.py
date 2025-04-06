@@ -1,9 +1,6 @@
-import re
-
-
 def extract_title(markdown):
-    matches = re.findall(r"(?<=#).*?([A-Z]\S+)|(?!^)\G.*?([A-Z]\S+)", markdown)
-    title = ""
-    for match in matches:
-        title += match
-    return matches
+    lines = markdown.split("\n")
+    for line in lines:
+        stripped_line = line.strip()
+        if stripped_line.startswith("# ") and not stripped_line.startswith("##"):
+            return stripped_line[2:].strip()
